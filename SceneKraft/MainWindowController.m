@@ -30,7 +30,7 @@
 		trackingArea = nil;
 		mouseControlActive = NO;
 		
-		NSWindow * window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 200, 200)
+		NSWindow * window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400)
 														styleMask:(NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask) backing:NSBackingStoreBuffered defer:YES];
 		[window setFrameAutosaveName:@"MainWindow"];
 		[window setTitle:@"SceneKraft"];
@@ -104,7 +104,6 @@
 	[self generateWorld];
 }
 
-#pragma mark - Scene Helpers
 - (void)generateWorld {
 	
 	for (int x = 0; x < 10; x++){
@@ -116,6 +115,7 @@
 	}
 }
 
+#pragma mark - Scene Helpers
 - (void)addNodeAtPosition:(SCNVector3)position {
 	SCNNode * blockNode = [SCNNode nodeWithGeometry:[SCNBox boxWithWidth:1 height:1 length:1 chamferRadius:0]];
 	[blockNode setPosition:position];
@@ -193,8 +193,8 @@
 		if (cameraRotLeftRight > M_PI * 2) cameraRotLeftRight -= M_PI * 2;
 		else if (cameraRotLeftRight < 0) cameraRotLeftRight += M_PI * 2;
 		
-		[cameraNode setTransform:CATransform3DRotate(cameraNode.transform, upDownAngle, 1, 0, 0)];
-		[cameraNode setTransform:CATransform3DRotate(cameraNode.transform, leftRightAngle, 0, sinf(cameraRotUpDown), cosf(cameraRotUpDown))];
+		CATransform3D rotationTransform = CATransform3DRotate(cameraNode.transform, upDownAngle, 1, 0, 0);
+		[cameraNode setTransform:CATransform3DRotate(rotationTransform, leftRightAngle, 0, sinf(cameraRotUpDown), cosf(cameraRotUpDown))];
 		
 		[self highlightBlockAtCenter];
 	}
@@ -209,14 +209,18 @@
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
 	
-	SCNVector3 newNodePosition = hitTestResult.node.position;
+	// TODO: New a more concrete way of determining new block location.
+	// Just because a coordinate is exactly 0.5, doesn't mean it's the correct face.
 	
-	if (hitTestResult.localCoordinates.x == 0.5) newNodePosition.x += 1;
-	else if (hitTestResult.localCoordinates.x == -0.5) newNodePosition.x -= 1;
-	else if (hitTestResult.localCoordinates.y == 0.5) newNodePosition.y += 1;
-	else if (hitTestResult.localCoordinates.y == -0.5) newNodePosition.y -= 1;
-	else if (hitTestResult.localCoordinates.z == 0.5) newNodePosition.z += 1;
-	else if (hitTestResult.localCoordinates.z == -0.5) newNodePosition.z -= 1;
+	SCNVector3 newNodePosition = hitTestResult.node.position;
+	SCNVector3 localCoordinates = hitTestResult.localCoordinates;
+	
+	if (localCoordinates.x == 0.5) newNodePosition.x += 1;
+	else if (localCoordinates.x == -0.5) newNodePosition.x -= 1;
+	else if (localCoordinates.y == 0.5) newNodePosition.y += 1;
+	else if (localCoordinates.y == -0.5) newNodePosition.y -= 1;
+	else if (localCoordinates.z == 0.5) newNodePosition.z += 1;
+	else if (localCoordinates.z == -0.5) newNodePosition.z -= 1;
 	
 	[self addNodeAtPosition:newNodePosition];
 }
@@ -235,6 +239,7 @@
 	[cameraNode setPosition:cameraNodePosition];
 }
 
+#pragma mark - Memory Management
 - (void)dealloc {
 	[hitTestResult release];
 	[super dealloc];
