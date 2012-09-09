@@ -174,7 +174,6 @@
 - (void)mouseMoved:(NSEvent *)theEvent {
 	
 	if (mouseControlActive){
-		[self highlightBlockAtCenter];
 		
 		CGFloat upDownAngle = DEG_TO_RAD(-theEvent.deltaY / 10000);
 		CGFloat leftRightAngle = DEG_TO_RAD(-theEvent.deltaX / 10000);
@@ -189,6 +188,8 @@
 		
 		[cameraNode setTransform:CATransform3DRotate(cameraNode.transform, upDownAngle, 1, 0, 0)];
 		[cameraNode setTransform:CATransform3DRotate(cameraNode.transform, leftRightAngle, 0, sinf(cameraRotUpDown), cosf(cameraRotUpDown))];
+		
+		[self highlightBlockAtCenter];
 	}
 }
 
