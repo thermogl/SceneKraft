@@ -1,0 +1,312 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E26DAA7915FB667B00A7E616 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E26DAA7815FB667B00A7E616 /* Cocoa.framework */; };
+		E26DAA8315FB667B00A7E616 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E26DAA8115FB667B00A7E616 /* InfoPlist.strings */; };
+		E26DAA8515FB667B00A7E616 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E26DAA8415FB667B00A7E616 /* main.m */; };
+		E26DAA8915FB667B00A7E616 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E26DAA8715FB667B00A7E616 /* Credits.rtf */; };
+		E26DAA8C15FB667B00A7E616 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E26DAA8B15FB667B00A7E616 /* AppDelegate.m */; };
+		E26DAA8F15FB667B00A7E616 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26DAA8D15FB667B00A7E616 /* MainMenu.xib */; };
+		E26DAA9715FB66AE00A7E616 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E26DAA9615FB66AE00A7E616 /* MainWindowController.m */; };
+		E26DAA9915FB66BE00A7E616 /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E26DAA9815FB66BE00A7E616 /* SceneKit.framework */; };
+		E26DAA9D15FB69DA00A7E616 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E26DAA9C15FB69DA00A7E616 /* QuartzCore.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		E26DAA7415FB667B00A7E616 /* SceneKraft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SceneKraft.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E26DAA7815FB667B00A7E616 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		E26DAA7B15FB667B00A7E616 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		E26DAA7C15FB667B00A7E616 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		E26DAA7D15FB667B00A7E616 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		E26DAA8015FB667B00A7E616 /* SceneKraft-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SceneKraft-Info.plist"; sourceTree = "<group>"; };
+		E26DAA8215FB667B00A7E616 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		E26DAA8415FB667B00A7E616 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E26DAA8615FB667B00A7E616 /* SceneKraft-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SceneKraft-Prefix.pch"; sourceTree = "<group>"; };
+		E26DAA8815FB667B00A7E616 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		E26DAA8A15FB667B00A7E616 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		E26DAA8B15FB667B00A7E616 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		E26DAA8E15FB667B00A7E616 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		E26DAA9515FB66AE00A7E616 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
+		E26DAA9615FB66AE00A7E616 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
+		E26DAA9815FB66BE00A7E616 /* SceneKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SceneKit.framework; path = System/Library/Frameworks/SceneKit.framework; sourceTree = SDKROOT; };
+		E26DAA9C15FB69DA00A7E616 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E26DAA7115FB667B00A7E616 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E26DAA9D15FB69DA00A7E616 /* QuartzCore.framework in Frameworks */,
+				E26DAA9915FB66BE00A7E616 /* SceneKit.framework in Frameworks */,
+				E26DAA7915FB667B00A7E616 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E26DAA6915FB667B00A7E616 = {
+			isa = PBXGroup;
+			children = (
+				E26DAA7E15FB667B00A7E616 /* SceneKraft */,
+				E26DAA7715FB667B00A7E616 /* Frameworks */,
+				E26DAA7515FB667B00A7E616 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E26DAA7515FB667B00A7E616 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E26DAA7415FB667B00A7E616 /* SceneKraft.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E26DAA7715FB667B00A7E616 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E26DAA9C15FB69DA00A7E616 /* QuartzCore.framework */,
+				E26DAA9815FB66BE00A7E616 /* SceneKit.framework */,
+				E26DAA7815FB667B00A7E616 /* Cocoa.framework */,
+				E26DAA7A15FB667B00A7E616 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E26DAA7A15FB667B00A7E616 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E26DAA7B15FB667B00A7E616 /* AppKit.framework */,
+				E26DAA7C15FB667B00A7E616 /* CoreData.framework */,
+				E26DAA7D15FB667B00A7E616 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		E26DAA7E15FB667B00A7E616 /* SceneKraft */ = {
+			isa = PBXGroup;
+			children = (
+				E26DAA8A15FB667B00A7E616 /* AppDelegate.h */,
+				E26DAA8B15FB667B00A7E616 /* AppDelegate.m */,
+				E26DAA9515FB66AE00A7E616 /* MainWindowController.h */,
+				E26DAA9615FB66AE00A7E616 /* MainWindowController.m */,
+				E26DAA8D15FB667B00A7E616 /* MainMenu.xib */,
+				E26DAA7F15FB667B00A7E616 /* Supporting Files */,
+			);
+			path = SceneKraft;
+			sourceTree = "<group>";
+		};
+		E26DAA7F15FB667B00A7E616 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E26DAA8015FB667B00A7E616 /* SceneKraft-Info.plist */,
+				E26DAA8115FB667B00A7E616 /* InfoPlist.strings */,
+				E26DAA8415FB667B00A7E616 /* main.m */,
+				E26DAA8615FB667B00A7E616 /* SceneKraft-Prefix.pch */,
+				E26DAA8715FB667B00A7E616 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E26DAA7315FB667B00A7E616 /* SceneKraft */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E26DAA9215FB667B00A7E616 /* Build configuration list for PBXNativeTarget "SceneKraft" */;
+			buildPhases = (
+				E26DAA7015FB667B00A7E616 /* Sources */,
+				E26DAA7115FB667B00A7E616 /* Frameworks */,
+				E26DAA7215FB667B00A7E616 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SceneKraft;
+			productName = SceneKraft;
+			productReference = E26DAA7415FB667B00A7E616 /* SceneKraft.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E26DAA6B15FB667B00A7E616 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = "Tom Irving";
+			};
+			buildConfigurationList = E26DAA6E15FB667B00A7E616 /* Build configuration list for PBXProject "SceneKraft" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E26DAA6915FB667B00A7E616;
+			productRefGroup = E26DAA7515FB667B00A7E616 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E26DAA7315FB667B00A7E616 /* SceneKraft */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E26DAA7215FB667B00A7E616 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E26DAA8315FB667B00A7E616 /* InfoPlist.strings in Resources */,
+				E26DAA8915FB667B00A7E616 /* Credits.rtf in Resources */,
+				E26DAA8F15FB667B00A7E616 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E26DAA7015FB667B00A7E616 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E26DAA8515FB667B00A7E616 /* main.m in Sources */,
+				E26DAA8C15FB667B00A7E616 /* AppDelegate.m in Sources */,
+				E26DAA9715FB66AE00A7E616 /* MainWindowController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		E26DAA8115FB667B00A7E616 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E26DAA8215FB667B00A7E616 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		E26DAA8715FB667B00A7E616 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E26DAA8815FB667B00A7E616 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		E26DAA8D15FB667B00A7E616 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E26DAA8E15FB667B00A7E616 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E26DAA9015FB667B00A7E616 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E26DAA9115FB667B00A7E616 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		E26DAA9315FB667B00A7E616 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SceneKraft/SceneKraft-Prefix.pch";
+				INFOPLIST_FILE = "SceneKraft/SceneKraft-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		E26DAA9415FB667B00A7E616 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SceneKraft/SceneKraft-Prefix.pch";
+				INFOPLIST_FILE = "SceneKraft/SceneKraft-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E26DAA6E15FB667B00A7E616 /* Build configuration list for PBXProject "SceneKraft" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E26DAA9015FB667B00A7E616 /* Debug */,
+				E26DAA9115FB667B00A7E616 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E26DAA9215FB667B00A7E616 /* Build configuration list for PBXNativeTarget "SceneKraft" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E26DAA9315FB667B00A7E616 /* Debug */,
+				E26DAA9415FB667B00A7E616 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E26DAA6B15FB667B00A7E616 /* Project object */;
+}

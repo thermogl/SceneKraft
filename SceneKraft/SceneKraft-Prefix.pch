@@ -1,0 +1,9 @@
+//
+// Prefix header for all source files of the 'SceneKraft' target in the 'SceneKraft' project
+//
+
+#ifdef __OBJC__
+	#import <Cocoa/Cocoa.h>
+	#import <SceneKit/SceneKit.h>
+	#import <QuartzCore/QuartzCore.h>
+#endif
