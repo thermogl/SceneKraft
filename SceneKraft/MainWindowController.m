@@ -10,14 +10,17 @@
 #define DEG_TO_RAD(x) (x * 180 / M_PI)
 
 @interface MainWindowController () <NSWindowDelegate>
+@property (nonatomic, retain) SCNHitTestResult * hitTestResult;
 @property (nonatomic, assign) BOOL mouseControlActive;
 - (void)setupScene;
 - (void)generateWorld;
+- (void)addNodeAtPosition:(SCNVector3)position;
 - (void)deselectHighlightedBlock;
 - (void)highlightBlockAtCenter;
 @end
 
 @implementation MainWindowController
+@synthesize hitTestResult;
 
 #pragma mark - Window Initialization
 - (id)init {
@@ -107,13 +110,17 @@
 	for (int x = 0; x < 10; x++){
 		for (int y = 0; y < 10; y++){
 			for (int z = 0; z < 10; z++){
-				SCNNode * blockNode = [SCNNode nodeWithGeometry:[SCNBox boxWithWidth:1 height:1 length:1 chamferRadius:0]];
-				[blockNode setPosition:SCNVector3Make(x, y, z)];
-				[sceneView.scene.rootNode addChildNode:blockNode];
-				[blockNode.geometry.firstMaterial.diffuse setContents:(id)[[NSColor redColor] CGColor]];
+				[self addNodeAtPosition:SCNVector3Make(x, y, z)];
 			}
 		}
 	}
+}
+
+- (void)addNodeAtPosition:(SCNVector3)position {
+	SCNNode * blockNode = [SCNNode nodeWithGeometry:[SCNBox boxWithWidth:1 height:1 length:1 chamferRadius:0]];
+	[blockNode setPosition:position];
+	[sceneView.scene.rootNode addChildNode:blockNode];
+	[blockNode.geometry.firstMaterial.diffuse setContents:(id)[[NSColor redColor] CGColor]];
 }
 
 - (void)highlightBlockAtCenter {
@@ -125,18 +132,18 @@
 	[results enumerateObjectsUsingBlock:^(SCNHitTestResult *result, NSUInteger idx, BOOL *stop) {
 		
 		if ([result.node.geometry isKindOfClass:[SCNBox class]]){
-			highlightedNode = result.node;
+			[self setHitTestResult:result];
 			*stop = YES;
 		}
 	}];
 	
-	[highlightedNode.geometry.firstMaterial.diffuse setContents:(id)[[NSColor yellowColor] CGColor]];
+	[hitTestResult.node.geometry.firstMaterial.diffuse setContents:(id)[[NSColor yellowColor] CGColor]];
 }
 
 - (void)deselectHighlightedBlock {
 	
-	[highlightedNode.geometry.firstMaterial.diffuse setContents:(id)[[NSColor redColor] CGColor]];
-	highlightedNode = nil;
+	[hitTestResult.node.geometry.firstMaterial.diffuse setContents:(id)[[NSColor redColor] CGColor]];
+	[self setHitTestResult:nil];
 }
 
 #pragma mark - Event Handling
@@ -196,16 +203,41 @@
 - (void)mouseDown:(NSEvent *)theEvent {
 	[self setMouseControlActive:YES];
 	
-	[highlightedNode removeFromParentNode];
-	highlightedNode = nil;
+	[hitTestResult.node removeFromParentNode];
+	[self setHitTestResult:nil];
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
-	//TODO: Add code for adding nodes
+	
+	SCNVector3 newNodePosition = hitTestResult.node.position;
+	
+	if (hitTestResult.localCoordinates.x == 0.5) newNodePosition.x += 1;
+	else if (hitTestResult.localCoordinates.x == -0.5) newNodePosition.x -= 1;
+	else if (hitTestResult.localCoordinates.y == 0.5) newNodePosition.y += 1;
+	else if (hitTestResult.localCoordinates.y == -0.5) newNodePosition.y -= 1;
+	else if (hitTestResult.localCoordinates.z == 0.5) newNodePosition.z += 1;
+	else if (hitTestResult.localCoordinates.z == -0.5) newNodePosition.z -= 1;
+	
+	[self addNodeAtPosition:newNodePosition];
+}
+
+- (void)rightMouseUp:(NSEvent *)theEvent {
+	[self highlightBlockAtCenter];
 }
 
 - (void)mouseUp:(NSEvent *)theEvent {
 	[self highlightBlockAtCenter];
+}
+
+- (void)scrollWheel:(NSEvent *)theEvent {
+	SCNVector3 cameraNodePosition = cameraNode.position;
+	cameraNodePosition.z += -theEvent.deltaY / 50;
+	[cameraNode setPosition:cameraNodePosition];
+}
+
+- (void)dealloc {
+	[hitTestResult release];
+	[super dealloc];
 }
 
 @end

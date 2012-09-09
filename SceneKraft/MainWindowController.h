@@ -13,7 +13,7 @@
 	SCNView * sceneView;
 	
 	SCNNode * cameraNode;
-	SCNNode * highlightedNode;
+	SCNHitTestResult * hitTestResult;
 	
 	CGFloat cameraRotUpDown;
 	CGFloat cameraRotLeftRight;
