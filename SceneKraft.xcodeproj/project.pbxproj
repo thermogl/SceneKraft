@@ -10,7 +10,6 @@
 		E26DAA7915FB667B00A7E616 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E26DAA7815FB667B00A7E616 /* Cocoa.framework */; };
 		E26DAA8315FB667B00A7E616 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E26DAA8115FB667B00A7E616 /* InfoPlist.strings */; };
 		E26DAA8515FB667B00A7E616 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E26DAA8415FB667B00A7E616 /* main.m */; };
-		E26DAA8915FB667B00A7E616 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = E26DAA8715FB667B00A7E616 /* Credits.rtf */; };
 		E26DAA8C15FB667B00A7E616 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E26DAA8B15FB667B00A7E616 /* AppDelegate.m */; };
 		E26DAA8F15FB667B00A7E616 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E26DAA8D15FB667B00A7E616 /* MainMenu.xib */; };
 		E26DAA9715FB66AE00A7E616 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E26DAA9615FB66AE00A7E616 /* MainWindowController.m */; };
@@ -28,7 +27,6 @@
 		E26DAA8215FB667B00A7E616 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E26DAA8415FB667B00A7E616 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		E26DAA8615FB667B00A7E616 /* SceneKraft-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SceneKraft-Prefix.pch"; sourceTree = "<group>"; };
-		E26DAA8815FB667B00A7E616 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		E26DAA8A15FB667B00A7E616 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E26DAA8B15FB667B00A7E616 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		E26DAA8E15FB667B00A7E616 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -110,7 +108,6 @@
 				E26DAA8115FB667B00A7E616 /* InfoPlist.strings */,
 				E26DAA8415FB667B00A7E616 /* main.m */,
 				E26DAA8615FB667B00A7E616 /* SceneKraft-Prefix.pch */,
-				E26DAA8715FB667B00A7E616 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -167,7 +164,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E26DAA8315FB667B00A7E616 /* InfoPlist.strings in Resources */,
-				E26DAA8915FB667B00A7E616 /* Credits.rtf in Resources */,
 				E26DAA8F15FB667B00A7E616 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -194,14 +190,6 @@
 				E26DAA8215FB667B00A7E616 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		E26DAA8715FB667B00A7E616 /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E26DAA8815FB667B00A7E616 /* en */,
-			);
-			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
 		E26DAA8D15FB667B00A7E616 /* MainMenu.xib */ = {
@@ -305,6 +293,7 @@
 				E26DAA9415FB667B00A7E616 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
