@@ -200,11 +200,11 @@
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
-	
+	//TODO: Add code for adding nodes
 }
 
 - (void)mouseUp:(NSEvent *)theEvent {
-	[self mouseMoved:theEvent];
+	[self highlightBlockAtCenter];
 }
 
 @end
