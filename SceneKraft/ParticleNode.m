@@ -35,26 +35,34 @@
 	
 	[nodes enumerateObjectsUsingBlock:^(SCNNode * node, NSUInteger idx, BOOL *stop) {
 		
-		if (self != node){
-			
-			SCNVector3 nodePosition = node.position;
-			SCNBox * boxGeometry = (SCNBox *)node.geometry;
-			
-			if (nodePosition.x <= (selfPosition.x + boxGeometry.width / 2) && (nodePosition.x + boxGeometry.width) > (selfPosition.x + boxGeometry.width / 2)){
-				if (nodePosition.y <= (selfPosition.y + boxGeometry.length / 2) && (nodePosition.y + boxGeometry.length) > (selfPosition.y + boxGeometry.length / 2)){
-					if (nodePosition.z <= selfPosition.z && (nodePosition.z + boxGeometry.height) > selfPosition.z){
-						
-						selfPosition.z = nodePosition.z + boxGeometry.height;
-						velocity.z = 0;
-						touchingGround = YES;
-						*stop = YES;
-					}
-				}
+		if (self != node && [node.geometry isKindOfClass:[SCNBox class]]){
+			if ([self collidesWithTopOfNode:node]){
+				selfPosition.z = node.position.z + ((SCNBox *)node.geometry).height;
+				velocity.z = 0;
+				touchingGround = YES;
+				*stop = YES;
 			}
 		}
 	}];
 	
 	[self setPosition:selfPosition];
+}
+
+- (BOOL)collidesWithTopOfNode:(SCNNode *)node {
+	
+	SCNVector3 selfPosition = self.position;
+	SCNVector3 nodePosition = node.position;
+	SCNBox * boxGeometry = (SCNBox *)node.geometry;
+	
+	if (nodePosition.x <= (selfPosition.x + boxGeometry.width / 2) && (nodePosition.x + boxGeometry.width) > (selfPosition.x + boxGeometry.width / 2)){
+		if (nodePosition.y <= (selfPosition.y + boxGeometry.length / 2) && (nodePosition.y + boxGeometry.length) > (selfPosition.y + boxGeometry.length / 2)){
+			if (nodePosition.z <= selfPosition.z && (nodePosition.z + boxGeometry.height) > selfPosition.z){
+				return YES;
+			}
+		}
+	}
+	
+	return NO;
 }
 
 @end

@@ -12,7 +12,6 @@
 @interface PlayerNode : ParticleNode {
 	
 	SCNVector4 movement;
-	
 	CGFloat rotationUpDown;
 	CGFloat rotationLeftRight;
 }

@@ -24,5 +24,6 @@
 
 - (void)updatePositionWithRefreshPeriod:(CGFloat)refreshPeriod;
 - (void)checkCollisionWithNodes:(NSArray *)nodes;
+- (BOOL)collidesWithTopOfNode:(SCNNode *)node;
 
 @end

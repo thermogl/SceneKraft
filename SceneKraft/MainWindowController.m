@@ -50,10 +50,12 @@ CGFloat const kWorldSize = 10;
 		[self setWindow:window];
 		[window release];
 		
-		sceneView = [[SCNView alloc] initWithFrame:[window.contentView bounds]];
+		NSView * contentView = window.contentView;
+		
+		sceneView = [[SCNView alloc] initWithFrame:contentView.bounds];
 		[sceneView setAutoresizingMask:(NSViewHeightSizable | NSViewWidthSizable)];
 		[sceneView setBackgroundColor:[NSColor blueColor]];
-		[window.contentView addSubview:sceneView];
+		[contentView addSubview:sceneView];
 		[sceneView release];
 		
 		[sceneView setNextResponder:self];
@@ -101,16 +103,6 @@ CGFloat const kWorldSize = 10;
 	[playerNode rotateByAmount:CGSizeMake(0, M_PI / 2)];
 	[playerNode setPosition:SCNVector3Make(kWorldSize / 2, 0, kWorldSize * 2)];
 	[sceneView.scene.rootNode addChildNode:playerNode];
-	
-	SCNNode * cameraNode = [SCNNode node];
-	SCNCamera * camera = [SCNCamera camera];
-	[camera setZNear:0.1];
-	[cameraNode setCamera:camera];
-	
-	[cameraNode setPosition:SCNVector3Make(kWorldSize / 2, -1, kWorldSize)];
-	[cameraNode setRotation:SCNVector4Make(1, 0, 0, M_PI / 2)];
-	
-	[sceneView.scene.rootNode addChildNode:cameraNode];
 	
 	SCNLight * worldLight = [SCNLight light];
 	[worldLight setType:SCNLightTypeDirectional];
@@ -193,7 +185,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 		SCNVector3 playerNodeVelocity = playerNode.velocity;
 		
 		if (playerNodePosition.z < 0){
-			playerNodePosition.z = kWorldSize * 2;
+			playerNodePosition.z = kWorldSize * (kBlockSize + 1);
 			playerNodeVelocity.z = 0;
 		}
 		
