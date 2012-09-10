@@ -27,11 +27,12 @@
 	[self setPosition:position];
 }
 
-// TODO: Make this better, stupidly slow and unreliable.
 - (void)checkCollisionWithNodes:(NSArray *)nodes {
+	// TODO: Make this better.
 	
 	touchingGround = NO;
 	__block SCNVector3 selfPosition = self.position;
+	
 	[nodes enumerateObjectsUsingBlock:^(SCNNode * node, NSUInteger idx, BOOL *stop) {
 		
 		if (self != node){
@@ -39,8 +40,8 @@
 			SCNVector3 nodePosition = node.position;
 			SCNBox * boxGeometry = (SCNBox *)node.geometry;
 			
-			if (nodePosition.x <= selfPosition.x && (nodePosition.x + boxGeometry.width) > selfPosition.x){
-				if (nodePosition.y <= selfPosition.y && (nodePosition.y + boxGeometry.length) > selfPosition.y){
+			if (nodePosition.x <= (selfPosition.x + boxGeometry.width / 2) && (nodePosition.x + boxGeometry.width) > (selfPosition.x + boxGeometry.width / 2)){
+				if (nodePosition.y <= (selfPosition.y + boxGeometry.length / 2) && (nodePosition.y + boxGeometry.length) > (selfPosition.y + boxGeometry.length / 2)){
 					if (nodePosition.z <= selfPosition.z && (nodePosition.z + boxGeometry.height) > selfPosition.z){
 						
 						selfPosition.z = nodePosition.z + boxGeometry.height;

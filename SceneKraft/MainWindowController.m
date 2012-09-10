@@ -11,7 +11,7 @@
 #define DEG_TO_RAD(x) (x * 180 / M_PI)
 
 // Standard units.
-CGFloat const kGravityAcceleration = 9.80665;
+CGFloat const kGravityAcceleration = -9.80665;
 CGFloat const kJumpHeight = 1.2;
 CGFloat const kPlayerMovementSpeed = 1.4;
 
@@ -122,9 +122,9 @@ CGFloat const kWorldSize = 10;
 
 - (void)generateWorld {
 	
-	for (int x = 0; x < kWorldSize; x++){
-		for (int y = 0; y < kWorldSize; y++){
-			for (int z = 0; z < kWorldSize; z++){
+	for (int x = 0; x < kWorldSize; x+= kBlockSize){
+		for (int y = 0; y < kWorldSize; y+= kBlockSize){
+			for (int z = 0; z < kWorldSize; z+= kBlockSize){
 				[self addNodeAtPosition:SCNVector3Make(x, y, z)];
 			}
 		}
@@ -185,7 +185,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 		
 		CGFloat refreshPeriod = CVDisplayLinkGetActualOutputVideoRefreshPeriod(displayLinkRef);
 		
-		[playerNode setAcceleration:SCNVector3Make(0, 0, -kGravityAcceleration)];
+		[playerNode setAcceleration:SCNVector3Make(0, 0, kGravityAcceleration)];
 		[playerNode updatePositionWithRefreshPeriod:refreshPeriod];
 		[playerNode checkCollisionWithNodes:sceneView.scene.rootNode.childNodes];
 		
@@ -218,8 +218,15 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 	[playerNode setMovement:movement];
 	
 	if (theEvent.keyCode == 49 && playerNode.touchingGround){
+		
+		// v^2 = u^2 + 2as
+		// 0 = u^2 + 2as (v = 0 at top of jump)
+		// -u^2 = 2as;
+		// u^2 = -2as;
+		// u = sqrt(-2 * kGravityAcceleration * kJumpHeight)
+		
 		SCNVector3 playerNodeVelocity = playerNode.velocity;
-		playerNodeVelocity.z = sqrtf(2 * kGravityAcceleration * kJumpHeight);
+		playerNodeVelocity.z = sqrtf(-2 * kGravityAcceleration * kJumpHeight);
 		[playerNode setVelocity:playerNodeVelocity];
 	}
 	
