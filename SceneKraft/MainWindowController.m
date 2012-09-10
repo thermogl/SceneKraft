@@ -13,6 +13,7 @@
 // Standard units.
 CGFloat const kGravityAcceleration = 9.80665;
 CGFloat const kJumpHeight = 1.2;
+CGFloat const kPlayerMovementSpeed = 1.4;
 
 CGFloat const kBlockSize = 1;
 CGFloat const kWorldSize = 10;
@@ -96,18 +97,20 @@ CGFloat const kWorldSize = 10;
 	
 	[sceneView setScene:[SCNScene scene]];
 	
-	SCNCamera * camera = [SCNCamera camera];
-	[camera setZNear:0.1];
-	
 	playerNode = [PlayerNode node];
-	[playerNode setCamera:camera];
 	[playerNode rotateByAmount:CGSizeMake(0, M_PI / 2)];
 	[playerNode setPosition:SCNVector3Make(kWorldSize / 2, 0, kWorldSize * 2)];
 	[sceneView.scene.rootNode addChildNode:playerNode];
 	
-	SCNLight * cameraLight = [SCNLight light];
-	[cameraLight setType:SCNLightTypeOmni];
-	[playerNode setLight:cameraLight];
+	SCNNode * cameraNode = [SCNNode node];
+	SCNCamera * camera = [SCNCamera camera];
+	[camera setZNear:0.1];
+	[cameraNode setCamera:camera];
+	
+	[cameraNode setPosition:SCNVector3Make(kWorldSize / 2, -1, kWorldSize)];
+	[cameraNode setRotation:SCNVector4Make(1, 0, 0, M_PI / 2)];
+	
+	[sceneView.scene.rootNode addChildNode:cameraNode];
 	
 	SCNLight * worldLight = [SCNLight light];
 	[worldLight setType:SCNLightTypeDirectional];
@@ -130,7 +133,7 @@ CGFloat const kWorldSize = 10;
 
 #pragma mark - Scene Helpers
 - (void)addNodeAtPosition:(SCNVector3)position {
-	
+		
 	SCNNode * blockNode = [SCNNode nodeWithGeometry:[SCNBox boxWithWidth:kBlockSize height:kBlockSize length:kBlockSize chamferRadius:0]];
 	[blockNode setPosition:position];
 	[sceneView.scene.rootNode addChildNode:blockNode];
@@ -141,17 +144,19 @@ CGFloat const kWorldSize = 10;
 	
 	[self deselectHighlightedBlock];
 	
-	CGPoint point = CGPointMake(sceneView.bounds.size.width / 2, sceneView.bounds.size.height / 2);
-    NSArray * results = [sceneView hitTest:point options:@{SCNHitTestSortResultsKey:@YES}];
-	[results enumerateObjectsUsingBlock:^(SCNHitTestResult *result, NSUInteger idx, BOOL *stop) {
+	if (mouseControlActive){
+		CGPoint point = CGPointMake(sceneView.bounds.size.width / 2, sceneView.bounds.size.height / 2);
+		NSArray * results = [sceneView hitTest:point options:@{SCNHitTestSortResultsKey:@YES}];
+		[results enumerateObjectsUsingBlock:^(SCNHitTestResult *result, NSUInteger idx, BOOL *stop) {
+			
+			if (result.node != playerNode && [result.node.geometry isKindOfClass:[SCNBox class]]){
+				[self setHitTestResult:result];
+				*stop = YES;
+			}
+		}];
 		
-		if ([result.node.geometry isKindOfClass:[SCNBox class]]){
-			[self setHitTestResult:result];
-			*stop = YES;
-		}
-	}];
-	
-	[hitTestResult.node.geometry.firstMaterial.diffuse setContents:(id)[[NSColor yellowColor] CGColor]];
+		[hitTestResult.node.geometry.firstMaterial.diffuse setContents:(id)[[NSColor yellowColor] CGColor]];
+	}
 }
 
 - (void)deselectHighlightedBlock {
@@ -187,11 +192,6 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 		SCNVector3 playerNodePosition = playerNode.position;
 		SCNVector3 playerNodeVelocity = playerNode.velocity;
 		
-		if (playerNodePosition.x < 0) playerNodePosition.x = 0;
-		else if (playerNodePosition.x > kWorldSize) playerNodePosition.x = kWorldSize;
-		if (playerNodePosition.y < 0) playerNodePosition.y = 0;
-		else if (playerNodePosition.y > kWorldSize) playerNodePosition.y = kWorldSize;
-		
 		if (playerNodePosition.z < 0){
 			playerNodePosition.z = kWorldSize * 2;
 			playerNodeVelocity.z = 0;
@@ -200,6 +200,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 		[playerNode setPosition:playerNodePosition];
 		[playerNode setVelocity:playerNodeVelocity];
 		
+		[self highlightBlockAtCenter];
 		[self.window setTitle:[NSString stringWithFormat:@"SceneKraft - %.f FPS", (1 / refreshPeriod)]];
 	});
 	
@@ -210,13 +211,13 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 - (void)keyDown:(NSEvent *)theEvent {
 	
 	SCNVector4 movement = playerNode.movement;
-	if (theEvent.keyCode == 126 || theEvent.keyCode == 13) movement.x = 1;
-	if (theEvent.keyCode == 123 || theEvent.keyCode == 0) movement.y = 1;
-	if (theEvent.keyCode == 125 || theEvent.keyCode == 1) movement.z = 1;
-	if (theEvent.keyCode == 124 || theEvent.keyCode == 2) movement.w = 1;
+	if (theEvent.keyCode == 126 || theEvent.keyCode == 13) movement.x = kPlayerMovementSpeed;
+	if (theEvent.keyCode == 123 || theEvent.keyCode == 0) movement.y = kPlayerMovementSpeed;
+	if (theEvent.keyCode == 125 || theEvent.keyCode == 1) movement.z = kPlayerMovementSpeed;
+	if (theEvent.keyCode == 124 || theEvent.keyCode == 2) movement.w = kPlayerMovementSpeed;
 	[playerNode setMovement:movement];
 	
-	if (theEvent.keyCode == 49){
+	if (theEvent.keyCode == 49 && playerNode.touchingGround){
 		SCNVector3 playerNodeVelocity = playerNode.velocity;
 		playerNodeVelocity.z = sqrtf(2 * kGravityAcceleration * kJumpHeight);
 		[playerNode setVelocity:playerNodeVelocity];
@@ -236,11 +237,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent {
-	
-	if (mouseControlActive){
-		[playerNode rotateByAmount:CGSizeMake(DEG_TO_RAD(-theEvent.deltaX / 10000),
-											  DEG_TO_RAD(-theEvent.deltaY / 10000))];
-	}
+	if (mouseControlActive) [playerNode rotateByAmount:CGSizeMake(DEG_TO_RAD(-theEvent.deltaX / 10000), DEG_TO_RAD(-theEvent.deltaY / 10000))];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {

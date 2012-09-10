@@ -13,18 +13,34 @@
 @property (nonatomic, assign) CGFloat rotationLeftRight;
 @end
 
+@interface PlayerNode (Private)
+- (void)buildPlayer;
+@end
+
 @implementation PlayerNode
-@synthesize velocity;
-@synthesize acceleration;
 @synthesize movement;
-@synthesize movementSpeed;
 @synthesize rotationUpDown;
 @synthesize rotationLeftRight;
 
 + (PlayerNode *)node {
 	PlayerNode * node = (PlayerNode *)[super node];
-	[node setMovementSpeed:1.4];
+	[node setMass:70];
+	
+	SCNCamera * camera = [SCNCamera camera];
+	[camera setZNear:0.1];
+	[node setCamera:camera];
+	
+	SCNLight * light = [SCNLight light];
+	[light setType:SCNLightTypeOmni];
+	[node setLight:light];
+	
+	[node buildPlayer];
+	
 	return node;
+}
+
+- (void)buildPlayer {
+	[self setGeometry:[SCNBox boxWithWidth:0.3 height:0.3 length:0.3 chamferRadius:0]];
 }
 
 - (void)rotateByAmount:(CGSize)amount {
@@ -42,71 +58,15 @@
 }
 
 - (void)updatePositionWithRefreshPeriod:(CGFloat)refreshPeriod {
-	
-	acceleration.x *= refreshPeriod;
-	acceleration.y *= refreshPeriod;
-	acceleration.z *= refreshPeriod;
-	
-	velocity.x += acceleration.x;
-	velocity.y += acceleration.y;
-	velocity.z += acceleration.z;
+	[super updatePositionWithRefreshPeriod:refreshPeriod];
 	
 	SCNVector3 position = self.position;
-	position.x += velocity.x * refreshPeriod;
-	position.y += velocity.y * refreshPeriod;
-	position.z += velocity.z * refreshPeriod;
+	position.x -= sinf(rotationLeftRight) * (movement.x - movement.z) * refreshPeriod;
+	position.y += cosf(rotationLeftRight) * (movement.x - movement.z) * refreshPeriod;
 	
-	CGFloat speed = movementSpeed * refreshPeriod;
-	
-	if (movement.x){ // Up
-		position.x -= sinf(rotationLeftRight) * speed;
-		position.y += cosf(rotationLeftRight) * speed;
-	}
-	
-	if (movement.y){ // Left
-		position.x -= cosf(rotationLeftRight) * speed;
-		position.y -= sinf(rotationLeftRight) * speed;
-	}
-	
-	if (movement.z){ // Down
-		position.y -= cosf(rotationLeftRight) * speed;
-		position.x += sinf(rotationLeftRight) * speed;
-	}
-	
-	if (movement.w){ // Right
-		position.x += cosf(rotationLeftRight) * speed;
-		position.y += sinf(rotationLeftRight) * speed;
-	}
-	
+	position.x -= cosf(rotationLeftRight) * (movement.y - movement.w) * refreshPeriod;
+	position.y -= sinf(rotationLeftRight) * (movement.y - movement.w) * refreshPeriod;
 	[self setPosition:position];
-}
-
-// TODO: Make this better, stupidly slow and unreliable.
-- (void)checkCollisionWithNodes:(NSArray *)nodes {
-	
-	__block SCNVector3 selfPosition = self.position;
-	[nodes enumerateObjectsUsingBlock:^(SCNNode * node, NSUInteger idx, BOOL *stop) {
-		
-		if (self != node){
-			
-			SCNVector3 nodePosition = node.position;
-			SCNBox * boxGeometry = (SCNBox *)node.geometry;
-			
-			if (nodePosition.x <= selfPosition.x && (nodePosition.x + boxGeometry.width) > selfPosition.x){
-				if (nodePosition.y <= selfPosition.y && (nodePosition.y + boxGeometry.length) > selfPosition.y){
-					if (nodePosition.z <= selfPosition.z && (nodePosition.z + boxGeometry.height) > selfPosition.z){
-						
-						selfPosition.z = nodePosition.z + boxGeometry.height;
-						velocity.z = 0;
-						touchingGround = YES;
-						*stop = YES;
-					}
-				}
-			}
-		}
-	}];
-	
-	[self setPosition:selfPosition];
 }
 
 @end
