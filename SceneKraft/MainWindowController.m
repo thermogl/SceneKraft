@@ -7,7 +7,7 @@
 //
 
 #import "MainWindowController.h"
-#import "CameraNode.h"
+#import "PlayerNode.h"
 #define DEG_TO_RAD(x) (x * 180 / M_PI)
 
 // Standard units.
@@ -76,7 +76,7 @@ CGFloat const kWorldSize = 10;
 }
 
 - (void)windowDidResignKey:(NSNotification *)notification {
-	[cameraNode setMovement:SCNVector4Make(0, 0, 0, 0)];
+	[playerNode setMovement:SCNVector4Make(0, 0, 0, 0)];
 }
 
 #pragma mark - Property Overrides
@@ -99,15 +99,15 @@ CGFloat const kWorldSize = 10;
 	SCNCamera * camera = [SCNCamera camera];
 	[camera setZNear:0.1];
 	
-	cameraNode = [CameraNode node];
-	[cameraNode setCamera:camera];
-	[cameraNode rotateByAmount:CGSizeMake(0, M_PI / 2)];
-	[cameraNode setPosition:SCNVector3Make(kWorldSize / 2, 0, kWorldSize * 2)];
-	[sceneView.scene.rootNode addChildNode:cameraNode];
+	playerNode = [PlayerNode node];
+	[playerNode setCamera:camera];
+	[playerNode rotateByAmount:CGSizeMake(0, M_PI / 2)];
+	[playerNode setPosition:SCNVector3Make(kWorldSize / 2, 0, kWorldSize * 2)];
+	[sceneView.scene.rootNode addChildNode:playerNode];
 	
 	SCNLight * cameraLight = [SCNLight light];
 	[cameraLight setType:SCNLightTypeOmni];
-	[cameraNode setLight:cameraLight];
+	[playerNode setLight:cameraLight];
 	
 	SCNLight * worldLight = [SCNLight light];
 	[worldLight setType:SCNLightTypeDirectional];
@@ -180,25 +180,25 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 		
 		CGFloat refreshPeriod = CVDisplayLinkGetActualOutputVideoRefreshPeriod(displayLinkRef);
 		
-		[cameraNode setAcceleration:SCNVector3Make(0, 0, -kGravityAcceleration)];
-		[cameraNode updatePositionWithRefreshPeriod:refreshPeriod];
-		[cameraNode checkCollisionWithNodes:sceneView.scene.rootNode.childNodes];
+		[playerNode setAcceleration:SCNVector3Make(0, 0, -kGravityAcceleration)];
+		[playerNode updatePositionWithRefreshPeriod:refreshPeriod];
+		[playerNode checkCollisionWithNodes:sceneView.scene.rootNode.childNodes];
 		
-		SCNVector3 cameraNodePosition = cameraNode.position;
-		SCNVector3 cameraNodeVelocity = cameraNode.velocity;
+		SCNVector3 playerNodePosition = playerNode.position;
+		SCNVector3 playerNodeVelocity = playerNode.velocity;
 		
-		if (cameraNodePosition.x < 0) cameraNodePosition.x = 0;
-		else if (cameraNodePosition.x > kWorldSize) cameraNodePosition.x = kWorldSize;
-		if (cameraNodePosition.y < 0) cameraNodePosition.y = 0;
-		else if (cameraNodePosition.y > kWorldSize) cameraNodePosition.y = kWorldSize;
+		if (playerNodePosition.x < 0) playerNodePosition.x = 0;
+		else if (playerNodePosition.x > kWorldSize) playerNodePosition.x = kWorldSize;
+		if (playerNodePosition.y < 0) playerNodePosition.y = 0;
+		else if (playerNodePosition.y > kWorldSize) playerNodePosition.y = kWorldSize;
 		
-		if (cameraNodePosition.z < 0){
-			cameraNodePosition.z = kWorldSize * 2;
-			cameraNodeVelocity.z = 0;
+		if (playerNodePosition.z < 0){
+			playerNodePosition.z = kWorldSize * 2;
+			playerNodeVelocity.z = 0;
 		}
 		
-		[cameraNode setPosition:cameraNodePosition];
-		[cameraNode setVelocity:cameraNodeVelocity];
+		[playerNode setPosition:playerNodePosition];
+		[playerNode setVelocity:playerNodeVelocity];
 		
 		[self.window setTitle:[NSString stringWithFormat:@"SceneKraft - %.f FPS", (1 / refreshPeriod)]];
 	});
@@ -209,17 +209,17 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 #pragma mark - Event Handling
 - (void)keyDown:(NSEvent *)theEvent {
 	
-	SCNVector4 movement = cameraNode.movement;
+	SCNVector4 movement = playerNode.movement;
 	if (theEvent.keyCode == 126 || theEvent.keyCode == 13) movement.x = 1;
 	if (theEvent.keyCode == 123 || theEvent.keyCode == 0) movement.y = 1;
 	if (theEvent.keyCode == 125 || theEvent.keyCode == 1) movement.z = 1;
 	if (theEvent.keyCode == 124 || theEvent.keyCode == 2) movement.w = 1;
-	[cameraNode setMovement:movement];
+	[playerNode setMovement:movement];
 	
 	if (theEvent.keyCode == 49){
-		SCNVector3 cameraNodeVelocity = cameraNode.velocity;
-		cameraNodeVelocity.z = sqrtf(2 * kGravityAcceleration * kJumpHeight);
-		[cameraNode setVelocity:cameraNodeVelocity];
+		SCNVector3 playerNodeVelocity = playerNode.velocity;
+		playerNodeVelocity.z = sqrtf(2 * kGravityAcceleration * kJumpHeight);
+		[playerNode setVelocity:playerNodeVelocity];
 	}
 	
 	if (theEvent.keyCode == 53) [self setMouseControlActive:!mouseControlActive];
@@ -227,18 +227,18 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 
 - (void)keyUp:(NSEvent *)theEvent {
 	
-	SCNVector4 movement = cameraNode.movement;
+	SCNVector4 movement = playerNode.movement;
 	if (theEvent.keyCode == 126 || theEvent.keyCode == 13) movement.x = 0;
 	if (theEvent.keyCode == 123 || theEvent.keyCode == 0) movement.y = 0;
 	if (theEvent.keyCode == 125 || theEvent.keyCode == 1) movement.z = 0;
 	if (theEvent.keyCode == 124 || theEvent.keyCode == 2) movement.w = 0;
-	[cameraNode setMovement:movement];
+	[playerNode setMovement:movement];
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent {
 	
 	if (mouseControlActive){
-		[cameraNode rotateByAmount:CGSizeMake(DEG_TO_RAD(-theEvent.deltaX / 10000),
+		[playerNode rotateByAmount:CGSizeMake(DEG_TO_RAD(-theEvent.deltaX / 10000),
 											  DEG_TO_RAD(-theEvent.deltaY / 10000))];
 	}
 }

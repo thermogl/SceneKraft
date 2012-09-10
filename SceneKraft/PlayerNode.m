@@ -1,19 +1,19 @@
 //
-//  CameraNode.m
+//  PlayerNode.m
 //  SceneKraft
 //
 //  Created by Tom Irving on 09/09/2012.
 //  Copyright (c) 2012 Tom Irving. All rights reserved.
 //
 
-#import "CameraNode.h"
+#import "PlayerNode.h"
 
-@interface CameraNode ()
+@interface PlayerNode ()
 @property (nonatomic, assign) CGFloat rotationUpDown;
 @property (nonatomic, assign) CGFloat rotationLeftRight;
 @end
 
-@implementation CameraNode
+@implementation PlayerNode
 @synthesize velocity;
 @synthesize acceleration;
 @synthesize movement;
@@ -21,8 +21,8 @@
 @synthesize rotationUpDown;
 @synthesize rotationLeftRight;
 
-+ (CameraNode *)node {
-	CameraNode * node = (CameraNode *)[super node];
++ (PlayerNode *)node {
+	PlayerNode * node = (PlayerNode *)[super node];
 	[node setMovementSpeed:1.4];
 	return node;
 }

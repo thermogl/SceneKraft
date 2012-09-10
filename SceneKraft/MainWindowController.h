@@ -8,13 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class CameraNode;
+@class PlayerNode;
 @interface MainWindowController : NSWindowController {
 	
 	SCNView * sceneView;
 	CVDisplayLinkRef displayLinkRef;
 	
-	CameraNode * cameraNode;
+	PlayerNode * playerNode;
 	SCNHitTestResult * hitTestResult;
 	
 	NSTrackingArea * trackingArea;

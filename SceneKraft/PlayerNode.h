@@ -1,5 +1,5 @@
 //
-//  CameraNode.h
+//  PlayerNode.h
 //  SceneKraft
 //
 //  Created by Tom Irving on 09/09/2012.
@@ -8,7 +8,7 @@
 
 #import <SceneKit/SceneKit.h>
 
-@interface CameraNode : SCNNode {
+@interface PlayerNode : SCNNode {
 	
 	SCNVector3 velocity;
 	SCNVector3 acceleration;
@@ -29,7 +29,7 @@
 @property (nonatomic, assign, readonly) CGFloat rotationLeftRight;
 @property (nonatomic, readonly) BOOL touchingGround;
 
-+ (CameraNode *)node;
++ (PlayerNode *)node;
 - (void)rotateByAmount:(CGSize)amount;
 
 - (void)updatePositionWithRefreshPeriod:(CGFloat)refreshPeriod;
