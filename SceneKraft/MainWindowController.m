@@ -7,7 +7,15 @@
 //
 
 #import "MainWindowController.h"
+#import "CameraNode.h"
 #define DEG_TO_RAD(x) (x * 180 / M_PI)
+
+// Standard units.
+CGFloat const kGravityAcceleration = 9.80665;
+CGFloat const kJumpHeight = 1.2;
+
+CGFloat const kBlockSize = 1;
+CGFloat const kWorldSize = 10;
 
 @interface MainWindowController () <NSWindowDelegate>
 @property (nonatomic, retain) SCNHitTestResult * hitTestResult;
@@ -17,6 +25,8 @@
 - (void)addNodeAtPosition:(SCNVector3)position;
 - (void)deselectHighlightedBlock;
 - (void)highlightBlockAtCenter;
+- (void)setupGameLoop;
+- (CVReturn)gameLoopAtTime:(CVTimeStamp)time;
 @end
 
 @implementation MainWindowController
@@ -29,6 +39,7 @@
 		
 		trackingArea = nil;
 		mouseControlActive = NO;
+		displayLinkRef = NULL;
 		
 		NSWindow * window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400)
 														styleMask:(NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask) backing:NSBackingStoreBuffered defer:YES];
@@ -46,6 +57,7 @@
 		
 		[sceneView setNextResponder:self];
 		[self setupScene];
+		[self setupGameLoop];
 		
 		[self windowDidResize:nil];
 	}
@@ -63,6 +75,10 @@
 	[trackingArea release];
 }
 
+- (void)windowDidResignKey:(NSNotification *)notification {
+	[cameraNode setMovement:SCNVector4Make(0, 0, 0, 0)];
+}
+
 #pragma mark - Property Overrides
 - (void)setMouseControlActive:(BOOL)active {
 	
@@ -78,18 +94,15 @@
 #pragma mark - Scene Initialization
 - (void)setupScene {
 	
-	cameraRotUpDown = M_PI / 2;
-	cameraRotLeftRight = 0;
-	
 	[sceneView setScene:[SCNScene scene]];
 	
 	SCNCamera * camera = [SCNCamera camera];
 	[camera setZNear:0.1];
 	
-	cameraNode = [SCNNode node];
+	cameraNode = [CameraNode node];
 	[cameraNode setCamera:camera];
-	[cameraNode setRotation:SCNVector4Make(1, 0, 0, cameraRotUpDown)];
-	[cameraNode setPosition:SCNVector3Make(5, 0, 10.1)];
+	[cameraNode rotateByAmount:CGSizeMake(0, M_PI / 2)];
+	[cameraNode setPosition:SCNVector3Make(kWorldSize / 2, 0, kWorldSize * 2)];
 	[sceneView.scene.rootNode addChildNode:cameraNode];
 	
 	SCNLight * cameraLight = [SCNLight light];
@@ -106,9 +119,9 @@
 
 - (void)generateWorld {
 	
-	for (int x = 0; x < 10; x++){
-		for (int y = 0; y < 10; y++){
-			for (int z = 0; z < 10; z++){
+	for (int x = 0; x < kWorldSize; x++){
+		for (int y = 0; y < kWorldSize; y++){
+			for (int z = 0; z < kWorldSize; z++){
 				[self addNodeAtPosition:SCNVector3Make(x, y, z)];
 			}
 		}
@@ -117,7 +130,8 @@
 
 #pragma mark - Scene Helpers
 - (void)addNodeAtPosition:(SCNVector3)position {
-	SCNNode * blockNode = [SCNNode nodeWithGeometry:[SCNBox boxWithWidth:1 height:1 length:1 chamferRadius:0]];
+	
+	SCNNode * blockNode = [SCNNode nodeWithGeometry:[SCNBox boxWithWidth:kBlockSize height:kBlockSize length:kBlockSize chamferRadius:0]];
 	[blockNode setPosition:position];
 	[sceneView.scene.rootNode addChildNode:blockNode];
 	[blockNode.geometry.firstMaterial.diffuse setContents:(id)[[NSColor redColor] CGColor]];
@@ -146,57 +160,86 @@
 	[self setHitTestResult:nil];
 }
 
+#pragma mark - Game Loop
+- (void)setupGameLoop {
+	
+	if (CVDisplayLinkCreateWithActiveCGDisplays(&displayLinkRef) == kCVReturnSuccess){
+		CVDisplayLinkSetOutputCallback(displayLinkRef, DisplayLinkCallback, self);
+		CVDisplayLinkStart(displayLinkRef);
+	}
+}
+
+static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *inNow, const CVTimeStamp *inOutputTime,
+									CVOptionFlags flagsIn, CVOptionFlags *flagsOut, void *displayLinkContext){
+	return [(MainWindowController *)displayLinkContext gameLoopAtTime:*inOutputTime];
+}
+
+- (CVReturn)gameLoopAtTime:(CVTimeStamp)time {
+	
+	dispatch_async(dispatch_get_main_queue(), ^{
+		
+		CGFloat refreshPeriod = CVDisplayLinkGetActualOutputVideoRefreshPeriod(displayLinkRef);
+		
+		[cameraNode setAcceleration:SCNVector3Make(0, 0, -kGravityAcceleration)];
+		[cameraNode updatePositionWithRefreshPeriod:refreshPeriod];
+		[cameraNode checkCollisionWithNodes:sceneView.scene.rootNode.childNodes];
+		
+		SCNVector3 cameraNodePosition = cameraNode.position;
+		SCNVector3 cameraNodeVelocity = cameraNode.velocity;
+		
+		if (cameraNodePosition.x < 0) cameraNodePosition.x = 0;
+		else if (cameraNodePosition.x > kWorldSize) cameraNodePosition.x = kWorldSize;
+		if (cameraNodePosition.y < 0) cameraNodePosition.y = 0;
+		else if (cameraNodePosition.y > kWorldSize) cameraNodePosition.y = kWorldSize;
+		
+		if (cameraNodePosition.z < 0){
+			cameraNodePosition.z = kWorldSize * 2;
+			cameraNodeVelocity.z = 0;
+		}
+		
+		[cameraNode setPosition:cameraNodePosition];
+		[cameraNode setVelocity:cameraNodeVelocity];
+		
+		[self.window setTitle:[NSString stringWithFormat:@"SceneKraft - %.f FPS", (1 / refreshPeriod)]];
+	});
+	
+	return kCVReturnSuccess;
+}
+
 #pragma mark - Event Handling
 - (void)keyDown:(NSEvent *)theEvent {
 	
-	CGFloat movementSpeed = 0.5;
+	SCNVector4 movement = cameraNode.movement;
+	if (theEvent.keyCode == 126 || theEvent.keyCode == 13) movement.x = 1;
+	if (theEvent.keyCode == 123 || theEvent.keyCode == 0) movement.y = 1;
+	if (theEvent.keyCode == 125 || theEvent.keyCode == 1) movement.z = 1;
+	if (theEvent.keyCode == 124 || theEvent.keyCode == 2) movement.w = 1;
+	[cameraNode setMovement:movement];
 	
-	SCNVector3 cameraNodePosition = cameraNode.position;
-	if (theEvent.keyCode == 126 || theEvent.keyCode == 13){ // Up
-		cameraNodePosition.y += cosf(cameraRotLeftRight) * movementSpeed;
-		cameraNodePosition.x -= sinf(cameraRotLeftRight) * movementSpeed;
-	}
-	
-	if (theEvent.keyCode == 125 || theEvent.keyCode == 1){ // Down
-		cameraNodePosition.y -= cosf(cameraRotLeftRight) * movementSpeed;
-		cameraNodePosition.x += sinf(cameraRotLeftRight) * movementSpeed;
-	}
-	
-	if (theEvent.keyCode == 123 || theEvent.keyCode == 0){ // Left
-		cameraNodePosition.x -= cosf(cameraRotLeftRight) * movementSpeed;
-		cameraNodePosition.y -= sinf(cameraRotLeftRight) * movementSpeed;
-	}
-	
-	if (theEvent.keyCode == 124 || theEvent.keyCode == 2){ // Right
-		cameraNodePosition.x += cosf(cameraRotLeftRight) * movementSpeed;
-		cameraNodePosition.y += sinf(cameraRotLeftRight) * movementSpeed;
+	if (theEvent.keyCode == 49){
+		SCNVector3 cameraNodeVelocity = cameraNode.velocity;
+		cameraNodeVelocity.z = sqrtf(2 * kGravityAcceleration * kJumpHeight);
+		[cameraNode setVelocity:cameraNodeVelocity];
 	}
 	
 	if (theEvent.keyCode == 53) [self setMouseControlActive:!mouseControlActive];
+}
+
+- (void)keyUp:(NSEvent *)theEvent {
 	
-	[cameraNode setPosition:cameraNodePosition];
-	[self highlightBlockAtCenter];
+	SCNVector4 movement = cameraNode.movement;
+	if (theEvent.keyCode == 126 || theEvent.keyCode == 13) movement.x = 0;
+	if (theEvent.keyCode == 123 || theEvent.keyCode == 0) movement.y = 0;
+	if (theEvent.keyCode == 125 || theEvent.keyCode == 1) movement.z = 0;
+	if (theEvent.keyCode == 124 || theEvent.keyCode == 2) movement.w = 0;
+	[cameraNode setMovement:movement];
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent {
 	
 	if (mouseControlActive){
-		
-		CGFloat upDownAngle = DEG_TO_RAD(-theEvent.deltaY / 10000);
-		CGFloat leftRightAngle = DEG_TO_RAD(-theEvent.deltaX / 10000);
-		
-		cameraRotUpDown += upDownAngle;
-		if (cameraRotUpDown > M_PI * 2) cameraRotUpDown -= M_PI * 2;
-		else if (cameraRotUpDown < 0) cameraRotUpDown += M_PI * 2;
-		
-		cameraRotLeftRight += leftRightAngle;
-		if (cameraRotLeftRight > M_PI * 2) cameraRotLeftRight -= M_PI * 2;
-		else if (cameraRotLeftRight < 0) cameraRotLeftRight += M_PI * 2;
-		
-		CATransform3D rotationTransform = CATransform3DRotate(cameraNode.transform, upDownAngle, 1, 0, 0);
-		[cameraNode setTransform:CATransform3DRotate(rotationTransform, leftRightAngle, 0, sinf(cameraRotUpDown), cosf(cameraRotUpDown))];
-		
-		[self highlightBlockAtCenter];
+		[cameraNode rotateByAmount:CGSizeMake(DEG_TO_RAD(-theEvent.deltaX / 10000),
+											  DEG_TO_RAD(-theEvent.deltaY / 10000))];
 	}
 }
 
@@ -217,31 +260,18 @@
 	
 	if (localCoordinates.x == 0.5) newNodePosition.x += 1;
 	else if (localCoordinates.x == -0.5) newNodePosition.x -= 1;
-	else if (localCoordinates.y == 0.5) newNodePosition.y += 1;
+	if (localCoordinates.y == 0.5) newNodePosition.y += 1;
 	else if (localCoordinates.y == -0.5) newNodePosition.y -= 1;
-	else if (localCoordinates.z == 0.5) newNodePosition.z += 1;
+	if (localCoordinates.z == 0.5) newNodePosition.z += 1;
 	else if (localCoordinates.z == -0.5) newNodePosition.z -= 1;
 	
 	[self addNodeAtPosition:newNodePosition];
 }
 
-- (void)rightMouseUp:(NSEvent *)theEvent {
-	[self highlightBlockAtCenter];
-}
-
-- (void)mouseUp:(NSEvent *)theEvent {
-	[self highlightBlockAtCenter];
-}
-
-- (void)scrollWheel:(NSEvent *)theEvent {
-	SCNVector3 cameraNodePosition = cameraNode.position;
-	cameraNodePosition.z += -theEvent.deltaY / 50;
-	[cameraNode setPosition:cameraNodePosition];
-}
-
 #pragma mark - Memory Management
 - (void)dealloc {
 	[hitTestResult release];
+	CVDisplayLinkRelease(displayLinkRef);
 	[super dealloc];
 }
 

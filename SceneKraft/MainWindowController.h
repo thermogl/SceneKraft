@@ -8,15 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class CameraNode;
 @interface MainWindowController : NSWindowController {
 	
 	SCNView * sceneView;
+	CVDisplayLinkRef displayLinkRef;
 	
-	SCNNode * cameraNode;
+	CameraNode * cameraNode;
 	SCNHitTestResult * hitTestResult;
-	
-	CGFloat cameraRotUpDown;
-	CGFloat cameraRotLeftRight;
 	
 	NSTrackingArea * trackingArea;
 	BOOL mouseControlActive;
