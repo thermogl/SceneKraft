@@ -8,6 +8,7 @@
 
 #import "MainWindowController.h"
 #import "PlayerNode.h"
+#import "BlockNode.h"
 #define DEG_TO_RAD(x) (x * 180 / M_PI)
 
 // Standard units.
@@ -15,7 +16,6 @@ CGFloat const kGravityAcceleration = -9.80665;
 CGFloat const kJumpHeight = 1.2;
 CGFloat const kPlayerMovementSpeed = 1.4;
 
-CGFloat const kBlockSize = 1;
 CGFloat const kWorldSize = 10;
 
 @interface MainWindowController () <NSWindowDelegate>
@@ -23,7 +23,7 @@ CGFloat const kWorldSize = 10;
 @property (nonatomic, assign) BOOL mouseControlActive;
 - (void)setupScene;
 - (void)generateWorld;
-- (void)addNodeAtPosition:(SCNVector3)position;
+- (void)addNodeAtPosition:(SCNVector3)position type:(BlockNodeType)type;
 - (void)deselectHighlightedBlock;
 - (void)highlightBlockAtCenter;
 - (void)setupGameLoop;
@@ -59,10 +59,10 @@ CGFloat const kWorldSize = 10;
 		[sceneView release];
 		
 		[sceneView setNextResponder:self];
+		[self windowDidResize:nil];
+		
 		[self setupScene];
 		[self setupGameLoop];
-		
-		[self windowDidResize:nil];
 	}
 	
 	return self;
@@ -114,22 +114,21 @@ CGFloat const kWorldSize = 10;
 
 - (void)generateWorld {
 	
-	for (int x = 0; x < kWorldSize; x+= kBlockSize){
-		for (int y = 0; y < kWorldSize; y+= kBlockSize){
-			for (int z = 0; z < kWorldSize; z+= kBlockSize){
-				[self addNodeAtPosition:SCNVector3Make(x, y, z)];
+	for (CGFloat x = 0; x < kWorldSize; x++){
+		for (CGFloat y = 0; y < kWorldSize; y++){
+			for (CGFloat z = 0; z < kWorldSize; z++){
+				[self addNodeAtPosition:SCNVector3Make(x, y, z) type:BlockNodeTypeDirt];
 			}
 		}
 	}
 }
 
 #pragma mark - Scene Helpers
-- (void)addNodeAtPosition:(SCNVector3)position {
-		
-	SCNNode * blockNode = [SCNNode nodeWithGeometry:[SCNBox boxWithWidth:kBlockSize height:kBlockSize length:kBlockSize chamferRadius:0]];
+- (void)addNodeAtPosition:(SCNVector3)position type:(BlockNodeType)type {
+	
+	BlockNode * blockNode = [BlockNode blockNodeWithType:type];
 	[blockNode setPosition:position];
 	[sceneView.scene.rootNode addChildNode:blockNode];
-	[blockNode.geometry.firstMaterial.diffuse setContents:(id)[[NSColor redColor] CGColor]];
 }
 
 - (void)highlightBlockAtCenter {
@@ -147,13 +146,13 @@ CGFloat const kWorldSize = 10;
 			}
 		}];
 		
-		[hitTestResult.node.geometry.firstMaterial.diffuse setContents:(id)[[NSColor yellowColor] CGColor]];
+		[hitTestResult.node.geometry.firstMaterial.reflective setBorderColor:[NSColor blackColor]];
 	}
 }
 
 - (void)deselectHighlightedBlock {
 	
-	[hitTestResult.node.geometry.firstMaterial.diffuse setContents:(id)[[NSColor redColor] CGColor]];
+	//[hitTestResult.node.geometry.firstMaterial.diffuse setContents:(id)[[NSColor redColor] CGColor]];
 	[self setHitTestResult:nil];
 }
 
@@ -182,15 +181,8 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 		[playerNode checkCollisionWithNodes:sceneView.scene.rootNode.childNodes];
 		
 		SCNVector3 playerNodePosition = playerNode.position;
-		SCNVector3 playerNodeVelocity = playerNode.velocity;
-		
-		if (playerNodePosition.z < 0){
-			playerNodePosition.z = kWorldSize * (kBlockSize + 1);
-			playerNodeVelocity.z = 0;
-		}
-		
+		if (playerNodePosition.z < 0) playerNodePosition.z = kWorldSize * 2;
 		[playerNode setPosition:playerNodePosition];
-		[playerNode setVelocity:playerNodeVelocity];
 		
 		[self highlightBlockAtCenter];
 		[self.window setTitle:[NSString stringWithFormat:@"SceneKraft - %.f FPS", (1 / refreshPeriod)]];
@@ -261,7 +253,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 	if (localCoordinates.z == 0.5) newNodePosition.z += 1;
 	else if (localCoordinates.z == -0.5) newNodePosition.z -= 1;
 	
-	[self addNodeAtPosition:newNodePosition];
+	[self addNodeAtPosition:newNodePosition type:BlockNodeTypeStone];
 }
 
 #pragma mark - Memory Management

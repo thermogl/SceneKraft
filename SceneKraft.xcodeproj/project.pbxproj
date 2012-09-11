@@ -16,6 +16,9 @@
 		E26DAA9915FB66BE00A7E616 /* SceneKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E26DAA9815FB66BE00A7E616 /* SceneKit.framework */; };
 		E26DAA9D15FB69DA00A7E616 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E26DAA9C15FB69DA00A7E616 /* QuartzCore.framework */; };
 		E28A830515FE0D6C00633C43 /* ParticleNode.m in Sources */ = {isa = PBXBuildFile; fileRef = E28A830415FE0D6C00633C43 /* ParticleNode.m */; };
+		E28A834715FEBDE000633C43 /* BlockNode.m in Sources */ = {isa = PBXBuildFile; fileRef = E28A834615FEBDE000633C43 /* BlockNode.m */; };
+		E28A836F15FF6FF700633C43 /* Dirt.png in Resources */ = {isa = PBXBuildFile; fileRef = E28A836D15FF6FF700633C43 /* Dirt.png */; };
+		E28A837015FF6FF700633C43 /* Stone.png in Resources */ = {isa = PBXBuildFile; fileRef = E28A836E15FF6FF700633C43 /* Stone.png */; };
 		E28FC44F15FD51B3003FDBA9 /* PlayerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = E28FC44E15FD51B3003FDBA9 /* PlayerNode.m */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +41,10 @@
 		E26DAA9C15FB69DA00A7E616 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		E28A830315FE0D6C00633C43 /* ParticleNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleNode.h; sourceTree = "<group>"; };
 		E28A830415FE0D6C00633C43 /* ParticleNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticleNode.m; sourceTree = "<group>"; };
+		E28A834515FEBDE000633C43 /* BlockNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockNode.h; sourceTree = "<group>"; };
+		E28A834615FEBDE000633C43 /* BlockNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlockNode.m; sourceTree = "<group>"; };
+		E28A836D15FF6FF700633C43 /* Dirt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Dirt.png; sourceTree = "<group>"; };
+		E28A836E15FF6FF700633C43 /* Stone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Stone.png; sourceTree = "<group>"; };
 		E28FC44D15FD51B3003FDBA9 /* PlayerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerNode.h; sourceTree = "<group>"; };
 		E28FC44E15FD51B3003FDBA9 /* PlayerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayerNode.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,6 +112,10 @@
 				E28A830415FE0D6C00633C43 /* ParticleNode.m */,
 				E28FC44D15FD51B3003FDBA9 /* PlayerNode.h */,
 				E28FC44E15FD51B3003FDBA9 /* PlayerNode.m */,
+				E28A834515FEBDE000633C43 /* BlockNode.h */,
+				E28A834615FEBDE000633C43 /* BlockNode.m */,
+				E28A836D15FF6FF700633C43 /* Dirt.png */,
+				E28A836E15FF6FF700633C43 /* Stone.png */,
 				E26DAA8D15FB667B00A7E616 /* MainMenu.xib */,
 				E26DAA7F15FB667B00A7E616 /* Supporting Files */,
 			);
@@ -175,6 +186,8 @@
 			files = (
 				E26DAA8315FB667B00A7E616 /* InfoPlist.strings in Resources */,
 				E26DAA8F15FB667B00A7E616 /* MainMenu.xib in Resources */,
+				E28A836F15FF6FF700633C43 /* Dirt.png in Resources */,
+				E28A837015FF6FF700633C43 /* Stone.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +203,7 @@
 				E26DAA9715FB66AE00A7E616 /* MainWindowController.m in Sources */,
 				E28FC44F15FD51B3003FDBA9 /* PlayerNode.m in Sources */,
 				E28A830515FE0D6C00633C43 /* ParticleNode.m in Sources */,
+				E28A834715FEBDE000633C43 /* BlockNode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
