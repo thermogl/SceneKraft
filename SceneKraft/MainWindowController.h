@@ -18,7 +18,7 @@
 	SCNHitTestResult * hitTestResult;
 	
 	NSTrackingArea * trackingArea;
-	BOOL mouseControlActive;
+	BOOL gameLoopRunning;
 }
 
 @end

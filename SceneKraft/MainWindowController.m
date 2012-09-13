@@ -20,7 +20,7 @@ CGFloat const kWorldSize = 10;
 
 @interface MainWindowController () <NSWindowDelegate>
 @property (nonatomic, retain) SCNHitTestResult * hitTestResult;
-@property (nonatomic, assign) BOOL mouseControlActive;
+@property (nonatomic, assign) BOOL gameLoopRunning;
 - (void)setupScene;
 - (void)generateWorld;
 - (void)addNodeAtPosition:(SCNVector3)position type:(BlockNodeType)type;
@@ -31,6 +31,7 @@ CGFloat const kWorldSize = 10;
 @end
 
 @implementation MainWindowController
+@synthesize gameLoopRunning;
 @synthesize hitTestResult;
 
 #pragma mark - Window Initialization
@@ -39,7 +40,7 @@ CGFloat const kWorldSize = 10;
 	if ((self = [super init])){
 		
 		trackingArea = nil;
-		mouseControlActive = NO;
+		gameLoopRunning = NO;
 		displayLinkRef = NULL;
 		
 		NSWindow * window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 400, 400)
@@ -83,14 +84,22 @@ CGFloat const kWorldSize = 10;
 }
 
 #pragma mark - Property Overrides
-- (void)setMouseControlActive:(BOOL)active {
+- (void)setGameLoopRunning:(BOOL)running {
 	
-	if (mouseControlActive != active){
-		mouseControlActive = active;
+	if (gameLoopRunning != running){
+		gameLoopRunning = running;
 		
-		CGAssociateMouseAndMouseCursorPosition(mouseControlActive ? FALSE : TRUE);
-		if (mouseControlActive) [NSCursor hide];
-		else [NSCursor unhide];
+		CGAssociateMouseAndMouseCursorPosition(gameLoopRunning ? FALSE : TRUE);
+		
+		if (gameLoopRunning){
+			[NSCursor hide];
+			CVDisplayLinkStart(displayLinkRef);
+		}
+		else
+		{
+			CVDisplayLinkStop(displayLinkRef);
+			[NSCursor unhide];
+		}
 	}
 }
 
@@ -108,7 +117,6 @@ CGFloat const kWorldSize = 10;
 	[worldLight setType:SCNLightTypeDirectional];
 	[sceneView.scene.rootNode setLight:worldLight];
 	
-	[self setMouseControlActive:NO];
 	[self generateWorld];
 }
 
@@ -135,7 +143,7 @@ CGFloat const kWorldSize = 10;
 	
 	[self deselectHighlightedBlock];
 	
-	if (mouseControlActive){
+	if (gameLoopRunning){
 		CGPoint point = CGPointMake(sceneView.bounds.size.width / 2, sceneView.bounds.size.height / 2);
 		NSArray * results = [sceneView hitTest:point options:@{SCNHitTestSortResultsKey:@YES}];
 		[results enumerateObjectsUsingBlock:^(SCNHitTestResult *result, NSUInteger idx, BOOL *stop) {
@@ -146,7 +154,7 @@ CGFloat const kWorldSize = 10;
 			}
 		}];
 		
-		[hitTestResult.node.geometry.firstMaterial.reflective setBorderColor:[NSColor blackColor]];
+		//[hitTestResult.node.geometry.firstMaterial.reflective setBorderColor:[NSColor blackColor]];
 	}
 }
 
@@ -161,7 +169,7 @@ CGFloat const kWorldSize = 10;
 	
 	if (CVDisplayLinkCreateWithActiveCGDisplays(&displayLinkRef) == kCVReturnSuccess){
 		CVDisplayLinkSetOutputCallback(displayLinkRef, DisplayLinkCallback, self);
-		CVDisplayLinkStart(displayLinkRef);
+		[self setGameLoopRunning:YES];
 	}
 }
 
@@ -214,7 +222,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 		[playerNode setVelocity:playerNodeVelocity];
 	}
 	
-	if (theEvent.keyCode == 53) [self setMouseControlActive:!mouseControlActive];
+	if (theEvent.keyCode == 53) [self setGameLoopRunning:!gameLoopRunning];
 }
 
 - (void)keyUp:(NSEvent *)theEvent {
@@ -228,11 +236,11 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent {
-	if (mouseControlActive) [playerNode rotateByAmount:CGSizeMake(DEG_TO_RAD(-theEvent.deltaX / 10000), DEG_TO_RAD(-theEvent.deltaY / 10000))];
+	if (gameLoopRunning) [playerNode rotateByAmount:CGSizeMake(DEG_TO_RAD(-theEvent.deltaX / 10000), DEG_TO_RAD(-theEvent.deltaY / 10000))];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
-	[self setMouseControlActive:YES];
+	[self setGameLoopRunning:YES];
 	
 	[hitTestResult.node removeFromParentNode];
 	[self setHitTestResult:nil];
